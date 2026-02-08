@@ -40,7 +40,7 @@ public static void main(String[] args) {
           System.out.println("Encerrando lista de tarefas");
           executando = false;
        }else {
-          System.out.println("Digite um numero de 1 a 4");
+          System.out.println("Digite um numero de 1 a 4 para realizar a tarefa: ");
        }
    }
 }
