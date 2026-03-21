@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Atlética ESC</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
+<link rel="shortcut icon" href="imagens/ESCio/favicon.ico" type="image/x-icon">k
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(180deg, #0a0014, #1a0033);
+  color: white;
+}
+
+/* NAV */
+header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  background: rgba(10,0,20,0.9);
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 999;
+}
+
+header h1 {
+  font-family: 'Anton', sans-serif;
+  letter-spacing: 2px;
+  color: #a855f7;
+}
+
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: .3s;
+}
+
+nav a:hover {
+  color: #c084fc;
+}
+
+/* HERO */
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: radial-gradient(circle, #6b21a8, #0a0014);
+  text-align: center;
+}
+
+.hero h2 {
+  font-size: 4rem;
+  font-family: 'Anton';
+  text-transform: uppercase;
+}
+
+.hero span {
+  color: #c084fc;
+}
+
+.btn {
+  margin-top: 30px;
+  padding: 15px 40px;
+  border: none;
+  background: linear-gradient(45deg, #9333ea, #c084fc);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+/* SECTIONS */
+section {
+  padding: 100px 40px;
+}
+
+h2 {
+  font-family: 'Anton';
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap: 20px;
+}
+
+.card {
+  background: linear-gradient(145deg, #1a0033, #2a0050);
+  padding: 30px;
+  border-radius: 10px;
+  transition: .4s;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 0 20px #9333ea;
+}
+
+/* EVENTOS */
+.event {
+  background: #2a0050;
+  padding: 20px;
+  margin-top: 20px;
+  border-left: 5px solid #c084fc;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 30px;
+  background: #0a0014;
+  opacity: .7;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>E.S.C</h1>
+  <nav>
+    <a href="#sobre">Sobre</a>
+    <a href="#modalidades">Modalidades</a>
+    <a href="#eventos">Eventos</a>
+    <a href="#recrutamento">Recrutamento</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>FORÇA • <span>RAÇA</span> • TRADIÇÃO</h2>
+  <button class="btn" onclick="scrollToSection('sobre')">Entrar no Jogo</button>
+</section>
+
+<section id="sobre">
+  <h2>Sobre a Atlética</h2>
+  <p>
+    A E.S.C representa a união, o esporte e a intensidade universitária.
+    Dentro e fora das quadras, levamos nossa identidade com orgulho.
+  </p>
+</section>
+
+<section id="modalidades">
+  <h2>Modalidades</h2>
+  <div class="cards">
+    <div class="card">⚽ Futebol</div>
+    <div class="card">🏀 Basquete</div>
+    <div class="card">🏐 Vôlei</div>
+    <div class="card">🤾 Handebol</div>
+    <div class="card">🐻 Cheer</div>
+  </div>
+</section>
+
+<section id="eventos">
+  <h2>Eventos</h2>
+
+  <div class="event">
+    🎉 OPEN BAR - 15 DE OUTUBRO
+  </div>
+
+  <div class="event">
+    🔥 INTERATLÉTICAS 2025
+  </div>
+
+</section>
+
+<section id="recrutamento">
+  <h2>Recrutamento</h2>
+  <p>Quer fazer parte do time? Mostre sua garra e venha defender nossas cores.</p>
+  <button class="btn">Quero Participar</button>
+</section>
+
+<footer>
+  © 2026 Atlética E.S.C
+</footer>
+
+<script>
+
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+/* animação ao rolar */
+const cards = document.querySelectorAll(".card");
+
+window.addEventListener("scroll", () => {
+  cards.forEach(card => {
+    const top = card.getBoundingClientRect().top;
+    if(top < window.innerHeight - 50){
+      card.style.opacity = 1;
+      card.style.transform = "translateY(0)";
+    }
+  });
+});
+
+cards.forEach(card => {
+  card.style.opacity = 0;
+  card.style.transform = "translateY(50px)";
+  card.style.transition = "0.6s";
+});
+
+</script>
+
+</body>
+</html>
