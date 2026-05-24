@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabela FIPE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f14;
+      --bg2:       #13161e;
+      --bg3:       #1a1e29;
+      --bg4:       #222738;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.13);
+      --text:      #e8eaf0;
+      --muted:     #7a8099;
+      --accent:    #4f80ff;
+      --accent2:   #6b9bff;
+      --accent-bg: rgba(79,128,255,0.10);
+      --accent-bg2:rgba(79,128,255,0.18);
+      --green:     #34d399;
+      --green-bg:  rgba(52,211,153,0.10);
+      --amber:     #fbbf24;
+      --amber-bg:  rgba(251,191,36,0.10);
+      --red:       #f87171;
+      --red-bg:    rgba(248,113,113,0.10);
+      --font:      'DM Sans', sans-serif;
+      --mono:      'DM Mono', monospace;
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,15,20,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .header-icon {
+      width: 36px; height: 36px;
+      background: var(--accent-bg2);
+      border: 1px solid rgba(79,128,255,0.3);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .header-icon svg { width: 18px; height: 18px; fill: var(--accent); }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .brand-name span { color: var(--accent); }
+
+    .header-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 72px 2rem 56px;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--accent-bg);
+      border: 1px solid rgba(79,128,255,0.2);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 24px;
+      letter-spacing: 0.03em;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    /* ── STEPS ── */
+    .steps-nav {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 2rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .step-item {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      border-right: 1px solid var(--border);
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .step-item:last-child { border-right: none; }
+
+    .step-item.active {
+      color: var(--accent);
+      background: var(--accent-bg);
+      font-weight: 500;
+    }
+
+    .step-item.done {
+      color: var(--green);
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--bg4);
+      color: var(--muted);
+      margin-right: 6px;
+      font-family: var(--mono);
+    }
+
+    .step-item.active .step-num { background: var(--accent); color: #fff; }
+    .step-item.done .step-num { background: var(--green-bg); color: var(--green); }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px; height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* ── TYPE SELECTOR ── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .type-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--text);
+      font-family: var(--font);
+    }
+
+    .type-btn:hover {
+      border-color: var(--border2);
+      background: var(--bg4);
+      transform: translateY(-2px);
+    }
+
+    .type-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+
+    .type-btn-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: block;
+      filter: grayscale(1);
+      transition: filter 0.2s;
+    }
+
+    .type-btn:hover .type-btn-icon,
+    .type-btn.selected .type-btn-icon { filter: none; }
+
+    .type-btn-label {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .type-btn-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── SEARCH + LIST ── */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px; height: 16px;
+      stroke: var(--muted);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 10px 14px 10px 40px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder { color: var(--muted); }
+
+    .list-scroll {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg3);
+    }
+
+    .list-scroll::-webkit-scrollbar { width: 6px; }
+    .list-scroll::-webkit-scrollbar-track { background: transparent; }
+    .list-scroll::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+    .list-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+      font-size: 14px;
+    }
+
+    .list-row:last-child { border-bottom: none; }
+    .list-row:hover { background: var(--bg4); }
+
+    .list-row.selected {
+      background: var(--accent-bg);
+      color: var(--accent2);
+    }
+
+    .list-code {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--bg4);
+      border-radius: 4px;
+      padding: 2px 7px;
+      min-width: 38px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .list-row.selected .list-code {
+      background: var(--accent-bg2);
+      color: var(--accent);
+    }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb strong { color: var(--text); font-weight: 500; }
+    .bc-sep { opacity: 0.4; }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 1.25rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 9px 18px;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border2);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover { background: var(--bg4); color: var(--text); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── LOADING ── */
+    .loading {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 2.5rem;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .loading.show { display: flex; }
+
+    .spin {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ERROR ── */
+    .error-box {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--red-bg);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--red);
+      font-size: 13px;
+      margin-bottom: 1rem;
+    }
+
+    .error-box.show { display: flex; }
+    .error-box svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+    /* ── RESULT CARDS ── */
+    .result-count {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .result-count strong { color: var(--text); }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .v-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .v-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .v-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+    .v-card:hover::before { opacity: 1; }
+
+    .v-ano {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      background: var(--accent-bg);
+      border: 1px solid rgba(79,128,255,0.2);
+      border-radius: 4px;
+      padding: 3px 9px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .v-valor {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .v-modelo {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .v-comb {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--amber);
+      background: var(--amber-bg);
+      border-radius: 4px;
+      padding: 3px 9px;
+    }
+
+    .v-comb svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    /* ── SECTIONS ── */
+    .section { display: none; }
+    .section.show { display: block; }
+    .section { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* ── EMPTY ── */
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .empty-icon { font-size: 40px; display: block; margin-bottom: 12px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero { padding: 48px 1.25rem 36px; }
+      .app { padding: 0 1.25rem 4rem; }
+      header { padding: 0 1.25rem; }
+      .type-grid { grid-template-columns: 1fr; }
+      .step-item { font-size: 11px; padding: 10px 4px; }
+      .step-num { display: none; }
+      .card { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"/></svg>
+    </div>
+    <span class="brand-name">Tabela <em>FIPE</em></span>
+  </div>
+  <span class="header-badge">API v1</span>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <svg width="10" height="10" viewBox="0 0 10 10" style="fill:currentColor"><circle cx="5" cy="5" r="4"/></svg>
+    Dados em tempo real · parallelum.com.br
+  </div>
+  <h1>Consulte o valor<br>de qualquer <em>veículo</em></h1>
+  <p>Pesquise carros, motos e caminhões na tabela FIPE oficial. Veja o histórico de preços por ano para qualquer modelo.</p>
+</section>
+
+<!-- APP -->
+<main class="app">
+
+  <!-- STEPS NAV -->
+  <nav class="steps-nav" aria-label="Etapas da consulta">
+    <div class="step-item active" id="step1"><span class="step-num">1</span>Tipo</div>
+    <div class="step-item" id="step2"><span class="step-num">2</span>Marca</div>
+    <div class="step-item" id="step3"><span class="step-num">3</span>Modelo</div>
+    <div class="step-item" id="step4"><span class="step-num">4</span>Resultados</div>
+  </nav>
+
+  <!-- ERROR -->
+  <div class="error-box" id="error-box" role="alert">
+    <svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="error-msg"></span>
+  </div>
+
+  <!-- STEP 1: TIPO -->
+  <div class="section show" id="sec-tipo">
+    <div class="card">
+      <p class="card-title">Selecione o tipo de veículo</p>
+      <div class="type-grid">
+        <button class="type-btn" onclick="selectTipo('carros', 'Carro', this)">
+          <span class="type-btn-icon">🚗</span>
+          <div class="type-btn-label">Carro</div>
+          <div class="type-btn-desc">Automóveis e utilitários</div>
+        </button>
+        <button class="type-btn" onclick="selectTipo('motos', 'Moto', this)">
+          <span class="type-btn-icon">🏍️</span>
+          <div class="type-btn-label">Moto</div>
+          <div class="type-btn-desc">Motocicletas e scooters</div>
+        </button>
+        <button class="type-btn" onclick="selectTipo('caminhoes', 'Caminhão', this)">
+          <span class="type-btn-icon">🚛</span>
+          <div class="type-btn-label">Caminhão</div>
+          <div class="type-btn-desc">Carga e transporte</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: MARCA -->
+  <div class="section" id="sec-marca">
+    <div class="breadcrumb" id="bc-marca"></div>
+    <div class="card">
+      <p class="card-title">Selecione a marca</p>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="inp-marca" placeholder="Filtrar marcas..." oninput="filterList('marca')" />
+      </div>
+      <div class="loading" id="load-marca"><div class="spin"></div> Carregando marcas...</div>
+      <div class="list-scroll" id="list-marca"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goStep(1)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Voltar
+      </button>
+      <button class="btn btn-primary" id="btn-marca" disabled onclick="goStep(3)">
+        Próximo<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3: MODELO -->
+  <div class="section" id="sec-modelo">
+    <div class="breadcrumb" id="bc-modelo"></div>
+    <div class="card">
+      <p class="card-title">Selecione o modelo</p>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="inp-modelo" placeholder="Filtrar modelos..." oninput="filterList('modelo')" />
+      </div>
+      <div class="loading" id="load-modelo"><div class="spin"></div> Carregando modelos...</div>
+      <div class="list-scroll" id="list-modelo"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goStep(2)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Voltar
+      </button>
+      <button class="btn btn-primary" id="btn-modelo" disabled onclick="loadResultados()">
+        Ver preços<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 4: RESULTADOS -->
+  <div class="section" id="sec-resultado">
+    <div class="breadcrumb" id="bc-resultado"></div>
+    <div class="card">
+      <p class="card-title">Histórico de preços por ano</p>
+      <div class="loading" id="load-resultado"><div class="spin"></div> Buscando avaliações por ano...</div>
+      <div id="result-count" class="result-count"></div>
+      <div class="results-grid" id="results-grid"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goStep(3)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Voltar
+      </button>
+      <button class="btn btn-primary" onclick="goStep(1)">
+        Nova consulta
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Dados fornecidos pela API pública &nbsp;<a href="https://deividfortuna.github.io/fipe/" target="_blank" rel="noopener">parallelum.com.br/fipe</a>
+  &nbsp;·&nbsp; Projeto desenvolvido com Java + Spring Boot
+</footer>
+
+<script>
+  const BASE = 'https://parallelum.com.br/fipe/api/v1/';
+
+  const state = {
+    tipo: null,
+    tipoLabel: null,
+    marcas: [],
+    modelos: [],
+    marcaSel: null,
+    modeloSel: null,
+  };
+
+  // ── UTILIDADES ──────────────────────────────────────────────
+
+  function showError(msg) {
+    const box = document.getElementById('error-box');
+    const span = document.getElementById('error-msg');
+    if (msg) { span.textContent = msg; box.classList.add('show'); }
+    else { box.classList.remove('show'); }
+  }
+
+  function setLoading(id, show) {
+    document.getElementById(id).classList.toggle('show', show);
+  }
+
+  function goStep(n) {
+    showError('');
+    ['sec-tipo','sec-marca','sec-modelo','sec-resultado'].forEach((id, i) => {
+      document.getElementById(id).classList.toggle('show', i + 1 === n);
+    });
+    ['step1','step2','step3','step4'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.className = 'step-item' + (i + 1 === n ? ' active' : i + 1 < n ? ' done' : '');
+    });
+    if (n === 1) {
+      state.tipo = null; state.tipoLabel = null;
+      state.marcaSel = null; state.modeloSel = null;
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+    }
+  }
+
+  function setBreadcrumb(id, parts) {
+    const el = document.getElementById(id);
+    el.innerHTML = parts.map((p, i) =>
+      i < parts.length - 1
+        ? `<strong>${p}</strong><span class="bc-sep">›</span>`
+        : `<span>${p}</span>`
+    ).join('');
+  }
+
+  // ── STEP 1: TIPO ─────────────────────────────────────────────
+
+  function selectTipo(tipo, label, btn) {
+    state.tipo = tipo;
+    state.tipoLabel = label;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    setTimeout(() => loadMarcas(), 180);
+  }
+
+  // ── STEP 2: MARCAS ───────────────────────────────────────────
+
+  async function loadMarcas() {
+    goStep(2);
+    setLoading('load-marca', true);
+    document.getElementById('list-marca').innerHTML = '';
+    document.getElementById('inp-marca').value = '';
+    document.getElementById('btn-marca').disabled = true;
+    state.marcaSel = null;
+    setBreadcrumb('bc-marca', [state.tipoLabel, 'Escolha a marca']);
+    try {
+      const res = await fetch(`${BASE}${state.tipo}/marcas`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      state.marcas = await res.json();
+      state.marcas.sort((a, b) => a.nome.localeCompare(b.nome));
+      renderList('marca', state.marcas);
+    } catch (e) {
+      showError('Não foi possível carregar as marcas. Verifique sua conexão e tente novamente.');
+    } finally {
+      setLoading('load-marca', false);
+    }
+  }
+
+  // ── STEP 3: MODELOS ──────────────────────────────────────────
+
+  async function loadModelos() {
+    setLoading('load-modelo', true);
+    document.getElementById('list-modelo').innerHTML = '';
+    document.getElementById('inp-modelo').value = '';
+    document.getElementById('btn-modelo').disabled = true;
+    state.modeloSel = null;
+    setBreadcrumb('bc-modelo', [state.tipoLabel, state.marcaSel.nome, 'Escolha o modelo']);
+    try {
+      const res = await fetch(`${BASE}${state.tipo}/marcas/${state.marcaSel.codigo}/modelos`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      state.modelos = data.modelos;
+      state.modelos.sort((a, b) => a.nome.localeCompare(b.nome));
+      renderList('modelo', state.modelos);
+    } catch (e) {
+      showError('Não foi possível carregar os modelos.');
+    } finally {
+      setLoading('load-modelo', false);
+    }
+  }
+
+  // ── STEP 4: RESULTADOS ───────────────────────────────────────
+
+  async function loadResultados() {
+    goStep(4);
+    setLoading('load-resultado', true);
+    document.getElementById('results-grid').innerHTML = '';
+    document.getElementById('result-count').textContent = '';
+    showError('');
+    setBreadcrumb('bc-resultado', [state.tipoLabel, state.marcaSel.nome, state.modeloSel.nome, 'Preços por ano']);
+    try {
+      const anosUrl = `${BASE}${state.tipo}/marcas/${state.marcaSel.codigo}/modelos/${state.modeloSel.codigo}/anos`;
+      const anosRes = await fetch(anosUrl);
+      if (!anosRes.ok) throw new Error();
+      const anos = await anosRes.json();
+
+      // busca todos os anos em paralelo (igual ao loop do Java, mas mais rápido)
+      const veiculos = await Promise.all(
+        anos.map(a =>
+          fetch(`${anosUrl}/${a.codigo}`)
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null)
+        )
+      );
+
+      const valid = veiculos.filter(Boolean);
+      setLoading('load-resultado', false);
+
+      if (!valid.length) {
+        document.getElementById('results-grid').innerHTML =
+          '<div class="empty"><span class="empty-icon">🔍</span>Nenhum resultado encontrado para este modelo.</div>';
+        return;
+      }
+
+      document.getElementById('result-count').innerHTML =
+        `<strong>${valid.length}</strong> avaliação${valid.length !== 1 ? 'ões' : ''} encontrada${valid.length !== 1 ? 's' : ''}`;
+
+      const grid = document.getElementById('results-grid');
+      valid.forEach(v => {
+        const div = document.createElement('div');
+        div.className = 'v-card';
+        div.innerHTML = `
+          <span class="v-ano">${v.AnoModelo}</span>
+          <div class="v-valor">${v.Valor}</div>
+          <div class="v-modelo">${v.Marca} · ${v.Modelo}</div>
+          <span class="v-comb">
+            <svg viewBox="0 0 24 24"><path d="M12 2c0 6-8 10-8 14a8 8 0 0 0 16 0c0-4-8-8-8-14z"/></svg>
+            ${v.Combustivel}
+          </span>
+        `;
+        grid.appendChild(div);
+      });
+    } catch (e) {
+      setLoading('load-resultado', false);
+      showError('Não foi possível buscar os preços. Tente novamente.');
+    }
+  }
+
+  // ── LISTAS ───────────────────────────────────────────────────
+
+  function renderList(type, items) {
+    const el = document.getElementById(`list-${type}`);
+    if (!items.length) {
+      el.innerHTML = '<div class="empty" style="padding:1.5rem">Nenhum item encontrado.</div>';
+      return;
+    }
+    el.innerHTML = items.map(item => `
+      <div class="list-row" onclick="selectItem('${type}', '${item.codigo}', this)">
+        <span class="list-code">${item.codigo}</span>
+        ${item.nome}
+      </div>
+    `).join('');
+  }
+
+  function filterList(type) {
+    const q = document.getElementById(`inp-${type}`).value.toLowerCase();
+    const items = type === 'marca' ? state.marcas : state.modelos;
+    const filtered = items.filter(i =>
+      i.nome.toLowerCase().includes(q) || String(i.codigo).includes(q)
+    );
+    renderList(type, filtered);
+    const sel = type === 'marca' ? state.marcaSel : state.modeloSel;
+    if (sel) {
+      document.querySelectorAll(`#list-${type} .list-row`).forEach(row => {
+        if (row.querySelector('.list-code').textContent === String(sel.codigo))
+          row.classList.add('selected');
+      });
+    }
+  }
+
+  function selectItem(type, codigo, el) {
+    const items = type === 'marca' ? state.marcas : state.modelos;
+    const item = items.find(i => String(i.codigo) === String(codigo));
+    if (!item) return;
+    document.querySelectorAll(`#list-${type} .list-row`).forEach(r => r.classList.remove('selected'));
+    el.classList.add('selected');
+    if (type === 'marca') {
+      state.marcaSel = item;
+      document.getElementById('btn-marca').disabled = false;
+      loadModelos();
+      goStep(3);
+    } else {
+      state.modeloSel = item;
+      document.getElementById('btn-modelo').disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

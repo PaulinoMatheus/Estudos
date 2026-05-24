@@ -7,8 +7,9 @@
 <title>Atlética ESC</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
-<link rel="shortcut icon" href="imagens/ESCio/favicon.ico" type="image/x-icon">k
+<link rel="shortcut icon" href="imagens/ESCio/favicon.ico" type="image/x-icon">
 
 <style>
 
@@ -19,7 +20,7 @@
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   background: linear-gradient(180deg, #0a0014, #1a0033);
   color: white;
 }
@@ -115,6 +116,13 @@ h2 {
   transition: .4s;
   text-align: center;
   border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+}
+
+.card p {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .card:hover {
@@ -162,29 +170,49 @@ footer {
   <h2>Sobre a Atlética</h2>
   <p>
     A E.S.C representa a união, o esporte e a intensidade universitária.
-    Dentro e fora das quadras, levamos nossa identidade com orgulho.
-  </p>
+    Dentro e fora das quadras, levamos nossa identidade com orgulho. 
+  </p><br>
+
+  <ol>
+    <h3><li>Espírito Esportivo</li></h3>
+    <p>Disciplina, superação e trabalho em equipe.</p>
+
+    <h3><li>Integração universitária</li></h3>
+    <p>Conexão entre alunos e fortalecimento da comunidade.</p>
+
+    <h3><li>Identidade e orgulho</li></h3>
+    <p>Representamos a universidade em alto nível.</p>
+  </ol>
 </section>
 
 <section id="modalidades">
   <h2>Modalidades</h2>
+
   <div class="cards">
-    <div class="card">⚽ Futebol</div>
-    <div class="card">🏀 Basquete</div>
-    <div class="card">🏐 Vôlei</div>
+
+    <div class="card" onclick="location.href='futebol.html'">
+      ⚽ Futebol
+      <p>Tradição e competitividade</p>
+    </div>
+
+    <div class="card" onclick="location.href='basquete.html'">
+      🏀 Basquete
+      <p>Velocidade e estratégia</p>
+    </div>
+
+    <div class="card" onclick="location.href='volei.html'">
+      🏐 Vôlei
+      <p>Precisão e trabalho em equipe</p>
+    </div>
+
   </div>
 </section>
 
 <section id="eventos">
   <h2>Eventos</h2>
 
-  <div class="event">
-    🎉 OPEN BAR - 15 DE OUTUBRO
-  </div>
-
-  <div class="event">
-    🔥 INTERATLÉTICAS 2025
-  </div>
+  <div class="event">🎉 OPEN BAR - 15 DE OUTUBRO</div>
+  <div class="event">🔥 INTERATLÉTICAS 2025</div>
 
 </section>
 
@@ -206,7 +234,7 @@ function scrollToSection(id){
   });
 }
 
-/* animação ao rolar */
+/* animação */
 const cards = document.querySelectorAll(".card");
 
 window.addEventListener("scroll", () => {
