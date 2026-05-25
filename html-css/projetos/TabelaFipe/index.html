@@ -3,10 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             script-src 'self' 'unsafe-inline';
+             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+             font-src https://fonts.gstatic.com;
+             connect-src https://parallelum.com.br;
+             img-src 'self' data:;">
+  <meta name="referrer" content="no-referrer">
   <title>Tabela FIPE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="shortcut icon" href="Imagens/carro.png" type="image/x-icon">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -255,6 +264,12 @@
       transform: translateY(-2px);
     }
 
+    /* [CORREÇÃO RNF03] Foco teclado visível nos botões de tipo */
+    .type-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
     .type-btn.selected {
       border-color: var(--accent);
       background: var(--accent-bg);
@@ -343,6 +358,12 @@
     .list-row:last-child { border-bottom: none; }
     .list-row:hover { background: var(--bg4); }
 
+    /* [CORREÇÃO RNF03] Foco teclado na lista */
+    .list-row:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
     .list-row.selected {
       background: var(--accent-bg);
       color: var(--accent2);
@@ -400,6 +421,12 @@
       padding: 9px 18px;
       transition: all 0.15s;
       border: 1px solid transparent;
+    }
+
+    /* [CORREÇÃO RNF03] Foco teclado nos botões de ação */
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .btn-ghost {
@@ -569,6 +596,16 @@
     footer a:hover { text-decoration: underline; }
 
     /* ── RESPONSIVE ── */
+    /* [CORREÇÃO RNF02] Breakpoint adicional para telas muito pequenas (320px) */
+    @media (max-width: 360px) {
+      .hero { padding: 36px 1rem 28px; }
+      .app { padding: 0 1rem 3rem; }
+      header { padding: 0 1rem; }
+      .type-grid { grid-template-columns: 1fr; gap: 8px; }
+      .brand-name { font-size: 14px; }
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 600px) {
       .hero { padding: 48px 1.25rem 36px; }
       .app { padding: 0 1.25rem 4rem; }
@@ -577,6 +614,8 @@
       .step-item { font-size: 11px; padding: 10px 4px; }
       .step-num { display: none; }
       .card { padding: 1.25rem; }
+      /* [CORREÇÃO RNF02] Resultados em coluna única em mobile */
+      .results-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -608,14 +647,15 @@
 
   <!-- STEPS NAV -->
   <nav class="steps-nav" aria-label="Etapas da consulta">
-    <div class="step-item active" id="step1"><span class="step-num">1</span>Tipo</div>
+    <div class="step-item active" id="step1" aria-current="step"><span class="step-num">1</span>Tipo</div>
     <div class="step-item" id="step2"><span class="step-num">2</span>Marca</div>
     <div class="step-item" id="step3"><span class="step-num">3</span>Modelo</div>
     <div class="step-item" id="step4"><span class="step-num">4</span>Resultados</div>
   </nav>
 
   <!-- ERROR -->
-  <div class="error-box" id="error-box" role="alert">
+  <!-- [CORREÇÃO RNF04] role=alert garante que leitores de tela anunciem o erro imediatamente -->
+  <div class="error-box" id="error-box" role="alert" aria-live="assertive">
     <svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     <span id="error-msg"></span>
   </div>
@@ -625,18 +665,19 @@
     <div class="card">
       <p class="card-title">Selecione o tipo de veículo</p>
       <div class="type-grid">
-        <button class="type-btn" onclick="selectTipo('carros', 'Carro', this)">
-          <span class="type-btn-icon">🚗</span>
+        <!-- [CORREÇÃO SEGURANÇA] Removidos handlers inline com parâmetros string diretos; binding via JS -->
+        <button class="type-btn" data-tipo="carros" data-label="Carro" aria-label="Selecionar Carro">
+          <span class="type-btn-icon" aria-hidden="true">🚗</span>
           <div class="type-btn-label">Carro</div>
           <div class="type-btn-desc">Automóveis e utilitários</div>
         </button>
-        <button class="type-btn" onclick="selectTipo('motos', 'Moto', this)">
-          <span class="type-btn-icon">🏍️</span>
+        <button class="type-btn" data-tipo="motos" data-label="Moto" aria-label="Selecionar Moto">
+          <span class="type-btn-icon" aria-hidden="true">🏍️</span>
           <div class="type-btn-label">Moto</div>
           <div class="type-btn-desc">Motocicletas e scooters</div>
         </button>
-        <button class="type-btn" onclick="selectTipo('caminhoes', 'Caminhão', this)">
-          <span class="type-btn-icon">🚛</span>
+        <button class="type-btn" data-tipo="caminhoes" data-label="Caminhão" aria-label="Selecionar Caminhão">
+          <span class="type-btn-icon" aria-hidden="true">🚛</span>
           <div class="type-btn-label">Caminhão</div>
           <div class="type-btn-desc">Carga e transporte</div>
         </button>
@@ -650,18 +691,22 @@
     <div class="card">
       <p class="card-title">Selecione a marca</p>
       <div class="search-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="inp-marca" placeholder="Filtrar marcas..." oninput="filterList('marca')" />
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <!-- [CORREÇÃO SEGURANÇA] autocomplete=off evita preenchimento automático indesejado -->
+        <input type="text" id="inp-marca" placeholder="Filtrar marcas..."
+               autocomplete="off" spellcheck="false"
+               aria-label="Filtrar marcas por nome ou código" />
       </div>
-      <div class="loading" id="load-marca"><div class="spin"></div> Carregando marcas...</div>
-      <div class="list-scroll" id="list-marca"></div>
+      <div class="loading" id="load-marca" role="status" aria-live="polite"><div class="spin" aria-hidden="true"></div> Carregando marcas...</div>
+      <!-- [CORREÇÃO RNF03] role=listbox para acessibilidade -->
+      <div class="list-scroll" id="list-marca" role="listbox" aria-label="Lista de marcas"></div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goStep(1)">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Voltar
+      <button class="btn btn-ghost" id="btn-voltar-marca">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Voltar
       </button>
-      <button class="btn btn-primary" id="btn-marca" disabled onclick="goStep(3)">
-        Próximo<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      <button class="btn btn-primary" id="btn-marca" disabled>
+        Próximo<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
   </div>
@@ -672,18 +717,20 @@
     <div class="card">
       <p class="card-title">Selecione o modelo</p>
       <div class="search-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="inp-modelo" placeholder="Filtrar modelos..." oninput="filterList('modelo')" />
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="inp-modelo" placeholder="Filtrar modelos..."
+               autocomplete="off" spellcheck="false"
+               aria-label="Filtrar modelos por nome ou código" />
       </div>
-      <div class="loading" id="load-modelo"><div class="spin"></div> Carregando modelos...</div>
-      <div class="list-scroll" id="list-modelo"></div>
+      <div class="loading" id="load-modelo" role="status" aria-live="polite"><div class="spin" aria-hidden="true"></div> Carregando modelos...</div>
+      <div class="list-scroll" id="list-modelo" role="listbox" aria-label="Lista de modelos"></div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goStep(2)">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Voltar
+      <button class="btn btn-ghost" id="btn-voltar-modelo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Voltar
       </button>
-      <button class="btn btn-primary" id="btn-modelo" disabled onclick="loadResultados()">
-        Ver preços<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      <button class="btn btn-primary" id="btn-modelo" disabled>
+        Ver preços<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
   </div>
@@ -693,17 +740,17 @@
     <div class="breadcrumb" id="bc-resultado"></div>
     <div class="card">
       <p class="card-title">Histórico de preços por ano</p>
-      <div class="loading" id="load-resultado"><div class="spin"></div> Buscando avaliações por ano...</div>
-      <div id="result-count" class="result-count"></div>
+      <div class="loading" id="load-resultado" role="status" aria-live="polite"><div class="spin" aria-hidden="true"></div> Buscando avaliações por ano...</div>
+      <div id="result-count" class="result-count" aria-live="polite"></div>
       <div class="results-grid" id="results-grid"></div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goStep(3)">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Voltar
+      <button class="btn btn-ghost" id="btn-voltar-resultado">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Voltar
       </button>
-      <button class="btn btn-primary" onclick="goStep(1)">
+      <button class="btn btn-primary" id="btn-nova-consulta">
         Nova consulta
-        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
       </button>
     </div>
   </div>
@@ -711,12 +758,20 @@
 </main>
 
 <footer>
-  Dados fornecidos pela API pública &nbsp;<a href="https://deividfortuna.github.io/fipe/" target="_blank" rel="noopener">parallelum.com.br/fipe</a>
+  Dados fornecidos pela API pública &nbsp;<a href="https://deividfortuna.github.io/fipe/" target="_blank" rel="noopener noreferrer">parallelum.com.br/fipe</a>
   &nbsp;·&nbsp; Projeto desenvolvido com Java + Spring Boot
 </footer>
 
 <script>
+  // ─────────────────────────────────────────────────────────────────────────
+  // [SEGURANÇA] BASE_URL usa HTTPS e é a única origem de dados permitida
+  // pela Content-Security-Policy definida no <head>.
+  // ─────────────────────────────────────────────────────────────────────────
   const BASE = 'https://parallelum.com.br/fipe/api/v1/';
+
+  // [SEGURANÇA] Lista de tipos de veículo permitidos (allowlist).
+  // Impede que um valor injetado via estado corrompido construa URLs arbitrárias.
+  const TIPOS_PERMITIDOS = new Set(['carros', 'motos', 'caminhoes']);
 
   const state = {
     tipo: null,
@@ -727,13 +782,33 @@
     modeloSel: null,
   };
 
-  // ── UTILIDADES ──────────────────────────────────────────────
+  // ── UTILITÁRIOS ──────────────────────────────────────────────────────────
+
+  /**
+   * Escapa caracteres HTML para evitar XSS ao inserir texto
+   * de origem externa (dados vindos da API) via innerHTML.
+   * [SEGURANÇA] Função central de sanitização.
+   */
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   function showError(msg) {
-    const box = document.getElementById('error-box');
+    const box  = document.getElementById('error-box');
     const span = document.getElementById('error-msg');
-    if (msg) { span.textContent = msg; box.classList.add('show'); }
-    else { box.classList.remove('show'); }
+    if (msg) {
+      // [SEGURANÇA] textContent em vez de innerHTML para mensagens de erro
+      span.textContent = msg;
+      box.classList.add('show');
+    } else {
+      box.classList.remove('show');
+    }
   }
 
   function setLoading(id, show) {
@@ -748,6 +823,8 @@
     ['step1','step2','step3','step4'].forEach((id, i) => {
       const el = document.getElementById(id);
       el.className = 'step-item' + (i + 1 === n ? ' active' : i + 1 < n ? ' done' : '');
+      // [CORREÇÃO RNF03] aria-current para indicar etapa ativa a leitores de tela
+      el.setAttribute('aria-current', i + 1 === n ? 'step' : 'false');
     });
     if (n === 1) {
       state.tipo = null; state.tipoLabel = null;
@@ -756,91 +833,143 @@
     }
   }
 
+  /**
+   * Monta o breadcrumb usando textContent para cada parte,
+   * evitando injeção de HTML via nomes vindos da API.
+   * [SEGURANÇA] Substituição do template literal com interpolação direta.
+   */
   function setBreadcrumb(id, parts) {
     const el = document.getElementById(id);
-    el.innerHTML = parts.map((p, i) =>
-      i < parts.length - 1
-        ? `<strong>${p}</strong><span class="bc-sep">›</span>`
-        : `<span>${p}</span>`
-    ).join('');
+    el.innerHTML = '';
+    parts.forEach((p, i) => {
+      if (i < parts.length - 1) {
+        const strong = document.createElement('strong');
+        strong.textContent = p;
+        const sep = document.createElement('span');
+        sep.className = 'bc-sep';
+        sep.textContent = '›';
+        el.appendChild(strong);
+        el.appendChild(sep);
+      } else {
+        const span = document.createElement('span');
+        span.textContent = p;
+        el.appendChild(span);
+      }
+    });
   }
 
-  // ── STEP 1: TIPO ─────────────────────────────────────────────
+  // ── STEP 1: TIPO ─────────────────────────────────────────────────────────
 
-  function selectTipo(tipo, label, btn) {
-    state.tipo = tipo;
+  /**
+   * [SEGURANÇA] Validação de allowlist antes de usar o tipo na URL.
+   */
+  function selectTipo(tipo, label) {
+    if (!TIPOS_PERMITIDOS.has(tipo)) return; // rejeita tipo não previsto
+    state.tipo      = tipo;
     state.tipoLabel = label;
     document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
+    const btn = document.querySelector(`.type-btn[data-tipo="${tipo}"]`);
+    if (btn) btn.classList.add('selected');
     setTimeout(() => loadMarcas(), 180);
   }
 
-  // ── STEP 2: MARCAS ───────────────────────────────────────────
+  // Binding via addEventListener — sem onclick inline
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectTipo(btn.dataset.tipo, btn.dataset.label);
+    });
+  });
+
+  // ── STEP 2: MARCAS ───────────────────────────────────────────────────────
+
+  /**
+   * [RNF01] ✅ Carregamento paralelo (usado em loadResultados).
+   * [RNF04] ✅ try/catch com AbortController para timeout de 10s.
+   */
+  async function fetchComTimeout(url, ms = 10000) {
+    const ctrl    = new AbortController();
+    const timer   = setTimeout(() => ctrl.abort(), ms);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
 
   async function loadMarcas() {
     goStep(2);
     setLoading('load-marca', true);
     document.getElementById('list-marca').innerHTML = '';
-    document.getElementById('inp-marca').value = '';
+    document.getElementById('inp-marca').value    = '';
     document.getElementById('btn-marca').disabled = true;
     state.marcaSel = null;
     setBreadcrumb('bc-marca', [state.tipoLabel, 'Escolha a marca']);
     try {
-      const res = await fetch(`${BASE}${state.tipo}/marcas`);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      state.marcas = await res.json();
+      // [SEGURANÇA] state.tipo é validado em selectTipo antes de chegar aqui
+      state.marcas = await fetchComTimeout(`${BASE}${state.tipo}/marcas`);
       state.marcas.sort((a, b) => a.nome.localeCompare(b.nome));
       renderList('marca', state.marcas);
     } catch (e) {
-      showError('Não foi possível carregar as marcas. Verifique sua conexão e tente novamente.');
+      // [RNF04] ✅ Distingue timeout de outros erros para melhor orientação
+      if (e.name === 'AbortError') {
+        showError('A requisição demorou demais. Verifique sua conexão e tente novamente.');
+      } else {
+        showError('Não foi possível carregar as marcas. Verifique sua conexão e tente novamente.');
+      }
     } finally {
       setLoading('load-marca', false);
     }
   }
 
-  // ── STEP 3: MODELOS ──────────────────────────────────────────
+  // ── STEP 3: MODELOS ──────────────────────────────────────────────────────
 
   async function loadModelos() {
     setLoading('load-modelo', true);
     document.getElementById('list-modelo').innerHTML = '';
-    document.getElementById('inp-modelo').value = '';
-    document.getElementById('btn-modelo').disabled = true;
+    document.getElementById('inp-modelo').value     = '';
+    document.getElementById('btn-modelo').disabled  = true;
     state.modeloSel = null;
     setBreadcrumb('bc-modelo', [state.tipoLabel, state.marcaSel.nome, 'Escolha o modelo']);
     try {
-      const res = await fetch(`${BASE}${state.tipo}/marcas/${state.marcaSel.codigo}/modelos`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
+      const data = await fetchComTimeout(
+        `${BASE}${state.tipo}/marcas/${encodeURIComponent(state.marcaSel.codigo)}/modelos`
+      );
       state.modelos = data.modelos;
       state.modelos.sort((a, b) => a.nome.localeCompare(b.nome));
       renderList('modelo', state.modelos);
     } catch (e) {
-      showError('Não foi possível carregar os modelos.');
+      if (e.name === 'AbortError') {
+        showError('A requisição demorou demais. Verifique sua conexão e tente novamente.');
+      } else {
+        showError('Não foi possível carregar os modelos.');
+      }
     } finally {
       setLoading('load-modelo', false);
     }
   }
 
-  // ── STEP 4: RESULTADOS ───────────────────────────────────────
+  // ── STEP 4: RESULTADOS ───────────────────────────────────────────────────
 
   async function loadResultados() {
     goStep(4);
     setLoading('load-resultado', true);
-    document.getElementById('results-grid').innerHTML = '';
+    document.getElementById('results-grid').innerHTML   = '';
     document.getElementById('result-count').textContent = '';
     showError('');
-    setBreadcrumb('bc-resultado', [state.tipoLabel, state.marcaSel.nome, state.modeloSel.nome, 'Preços por ano']);
+    setBreadcrumb('bc-resultado', [
+      state.tipoLabel, state.marcaSel.nome, state.modeloSel.nome, 'Preços por ano'
+    ]);
     try {
-      const anosUrl = `${BASE}${state.tipo}/marcas/${state.marcaSel.codigo}/modelos/${state.modeloSel.codigo}/anos`;
-      const anosRes = await fetch(anosUrl);
-      if (!anosRes.ok) throw new Error();
-      const anos = await anosRes.json();
+      // [SEGURANÇA] encodeURIComponent em todos os parâmetros dinâmicos de URL
+      const anosUrl = `${BASE}${state.tipo}/marcas/${encodeURIComponent(state.marcaSel.codigo)}/modelos/${encodeURIComponent(state.modeloSel.codigo)}/anos`;
+      const anos    = await fetchComTimeout(anosUrl);
 
-      // busca todos os anos em paralelo (igual ao loop do Java, mas mais rápido)
+      // [RNF01] ✅ Promise.all — busca todos os anos simultaneamente
       const veiculos = await Promise.all(
         anos.map(a =>
-          fetch(`${anosUrl}/${a.codigo}`)
-            .then(r => r.ok ? r.json() : null)
+          fetchComTimeout(`${anosUrl}/${encodeURIComponent(a.codigo)}`)
             .catch(() => null)
         )
       );
@@ -849,53 +978,113 @@
       setLoading('load-resultado', false);
 
       if (!valid.length) {
-        document.getElementById('results-grid').innerHTML =
-          '<div class="empty"><span class="empty-icon">🔍</span>Nenhum resultado encontrado para este modelo.</div>';
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.innerHTML = '<span class="empty-icon" aria-hidden="true">🔍</span>';
+        const txt = document.createElement('p');
+        txt.textContent = 'Nenhum resultado encontrado para este modelo.';
+        empty.appendChild(txt);
+        document.getElementById('results-grid').appendChild(empty);
         return;
       }
 
-      document.getElementById('result-count').innerHTML =
-        `<strong>${valid.length}</strong> avaliação${valid.length !== 1 ? 'ões' : ''} encontrada${valid.length !== 1 ? 's' : ''}`;
+      const countEl = document.getElementById('result-count');
+      const countSpan = document.createElement('strong');
+      countSpan.textContent = valid.length;
+      countEl.appendChild(countSpan);
+      countEl.appendChild(document.createTextNode(
+        ` avaliação${valid.length !== 1 ? 'ões' : ''} encontrada${valid.length !== 1 ? 's' : ''}`
+      ));
 
       const grid = document.getElementById('results-grid');
       valid.forEach(v => {
-        const div = document.createElement('div');
-        div.className = 'v-card';
-        div.innerHTML = `
-          <span class="v-ano">${v.AnoModelo}</span>
-          <div class="v-valor">${v.Valor}</div>
-          <div class="v-modelo">${v.Marca} · ${v.Modelo}</div>
-          <span class="v-comb">
-            <svg viewBox="0 0 24 24"><path d="M12 2c0 6-8 10-8 14a8 8 0 0 0 16 0c0-4-8-8-8-14z"/></svg>
-            ${v.Combustivel}
-          </span>
-        `;
-        grid.appendChild(div);
+        // [SEGURANÇA] Construção do card via DOM API — sem innerHTML com dados da API
+        const card = document.createElement('div');
+        card.className = 'v-card';
+
+        const anoEl = document.createElement('span');
+        anoEl.className = 'v-ano';
+        anoEl.textContent = v.AnoModelo;
+
+        const valorEl = document.createElement('div');
+        valorEl.className = 'v-valor';
+        valorEl.textContent = v.Valor;
+
+        const modeloEl = document.createElement('div');
+        modeloEl.className = 'v-modelo';
+        modeloEl.textContent = `${v.Marca} · ${v.Modelo}`;
+
+        const combEl = document.createElement('span');
+        combEl.className = 'v-comb';
+        combEl.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c0 6-8 10-8 14a8 8 0 0 0 16 0c0-4-8-8-8-14z"/></svg>`;
+        const combTxt = document.createElement('span');
+        combTxt.textContent = v.Combustivel;
+        combEl.appendChild(combTxt);
+
+        card.appendChild(anoEl);
+        card.appendChild(valorEl);
+        card.appendChild(modeloEl);
+        card.appendChild(combEl);
+        grid.appendChild(card);
       });
     } catch (e) {
       setLoading('load-resultado', false);
-      showError('Não foi possível buscar os preços. Tente novamente.');
+      if (e.name === 'AbortError') {
+        showError('A requisição demorou demais. Tente novamente.');
+      } else {
+        showError('Não foi possível buscar os preços. Tente novamente.');
+      }
     }
   }
 
-  // ── LISTAS ───────────────────────────────────────────────────
+  // ── LISTAS ───────────────────────────────────────────────────────────────
 
+  /**
+   * [SEGURANÇA] Constrói linhas da lista via DOM API.
+   * O atributo data-codigo armazena o código sem interpolação inline,
+   * eliminando o vetor de injeção que existia no onclick="selectItem('tipo','CÓDIGO_DA_API',this)".
+   */
   function renderList(type, items) {
     const el = document.getElementById(`list-${type}`);
+    el.innerHTML = '';
+
     if (!items.length) {
-      el.innerHTML = '<div class="empty" style="padding:1.5rem">Nenhum item encontrado.</div>';
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.style.padding = '1.5rem';
+      empty.textContent = 'Nenhum item encontrado.';
+      el.appendChild(empty);
       return;
     }
-    el.innerHTML = items.map(item => `
-      <div class="list-row" onclick="selectItem('${type}', '${item.codigo}', this)">
-        <span class="list-code">${item.codigo}</span>
-        ${item.nome}
-      </div>
-    `).join('');
+
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'list-row';
+      row.setAttribute('role', 'option');
+      row.setAttribute('aria-selected', 'false');
+      row.setAttribute('tabindex', '0');
+      row.dataset.codigo = item.codigo; // armazenado como atributo, nunca como código executável
+
+      const code = document.createElement('span');
+      code.className = 'list-code';
+      code.textContent = item.codigo;
+
+      const name = document.createElement('span');
+      name.textContent = item.nome;
+
+      row.appendChild(code);
+      row.appendChild(name);
+
+      // [RNF05] ✅ Binding via addEventListener — sem onclick embutido no HTML gerado
+      row.addEventListener('click',    () => selectItem(type, item.codigo));
+      row.addEventListener('keydown',  e  => { if (e.key === 'Enter' || e.key === ' ') selectItem(type, item.codigo); });
+
+      el.appendChild(row);
+    });
   }
 
   function filterList(type) {
-    const q = document.getElementById(`inp-${type}`).value.toLowerCase();
+    const q     = document.getElementById(`inp-${type}`).value.toLowerCase();
     const items = type === 'marca' ? state.marcas : state.modelos;
     const filtered = items.filter(i =>
       i.nome.toLowerCase().includes(q) || String(i.codigo).includes(q)
@@ -904,18 +1093,36 @@
     const sel = type === 'marca' ? state.marcaSel : state.modeloSel;
     if (sel) {
       document.querySelectorAll(`#list-${type} .list-row`).forEach(row => {
-        if (row.querySelector('.list-code').textContent === String(sel.codigo))
+        if (row.dataset.codigo === String(sel.codigo)) {
           row.classList.add('selected');
+          row.setAttribute('aria-selected', 'true');
+        }
       });
     }
   }
 
-  function selectItem(type, codigo, el) {
+  // [RNF05] ✅ Binding dos campos de busca via addEventListener
+  document.getElementById('inp-marca').addEventListener('input',  () => filterList('marca'));
+  document.getElementById('inp-modelo').addEventListener('input', () => filterList('modelo'));
+
+  function selectItem(type, codigo) {
     const items = type === 'marca' ? state.marcas : state.modelos;
-    const item = items.find(i => String(i.codigo) === String(codigo));
+    // [SEGURANÇA] Lookup no array de estado — o código recebido é apenas uma chave de busca,
+    // nunca usado diretamente em innerHTML ou eval.
+    const item  = items.find(i => String(i.codigo) === String(codigo));
     if (!item) return;
-    document.querySelectorAll(`#list-${type} .list-row`).forEach(r => r.classList.remove('selected'));
-    el.classList.add('selected');
+
+    document.querySelectorAll(`#list-${type} .list-row`).forEach(r => {
+      r.classList.remove('selected');
+      r.setAttribute('aria-selected', 'false');
+    });
+
+    const el = document.querySelector(`#list-${type} .list-row[data-codigo="${CSS.escape(String(codigo))}"]`);
+    if (el) {
+      el.classList.add('selected');
+      el.setAttribute('aria-selected', 'true');
+    }
+
     if (type === 'marca') {
       state.marcaSel = item;
       document.getElementById('btn-marca').disabled = false;
@@ -926,6 +1133,16 @@
       document.getElementById('btn-modelo').disabled = false;
     }
   }
+
+  // ── BINDING DOS BOTÕES DE NAVEGAÇÃO ──────────────────────────────────────
+  // [RNF05] ✅ Todos os event listeners centralizados aqui, sem inline handlers
+
+  document.getElementById('btn-voltar-marca').addEventListener('click',     () => goStep(1));
+  document.getElementById('btn-marca').addEventListener('click',            () => goStep(3));
+  document.getElementById('btn-voltar-modelo').addEventListener('click',    () => goStep(2));
+  document.getElementById('btn-modelo').addEventListener('click',           () => loadResultados());
+  document.getElementById('btn-voltar-resultado').addEventListener('click', () => goStep(3));
+  document.getElementById('btn-nova-consulta').addEventListener('click',    () => goStep(1));
 </script>
 </body>
 </html>
